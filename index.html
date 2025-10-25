@@ -1,3 +1,5 @@
+[file name]: index.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +8,7 @@
     <title>👾 Grifton Shop - NFT Marketplace</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -18,26 +21,27 @@
         <!-- Статус -->
         <div class="status-badge">
             <span class="status-online">🟢 ONLINE</span>
-            <span class="user-count">👥 1,234 collectors</span>
+            <span class="user-count">👥 <span id="user-count">1,234</span> collectors</span>
         </div>
 
         <!-- Баланс и статистика -->
         <div class="wallet-section">
             <div class="wallet-card">
                 <h3>💰 Ваш баланс</h3>
-                <div class="balance">1,500 GRFT</div>
-                <div class="equivalent">≈ $2,250</div>
+                <div class="balance" id="user-balance">0 GRFT</div>
+                <div class="equivalent" id="balance-equivalent">≈ $0</div>
+                <button class="connect-btn" onclick="connectWallet()">Подключить кошелек</button>
             </div>
             <div class="stats-card">
                 <h3>📊 Статистика</h3>
                 <div class="stats">
                     <div class="stat-item">
                         <span>NFTs:</span>
-                        <strong>15</strong>
+                        <strong id="user-nft-count">0</strong>
                     </div>
                     <div class="stat-item">
                         <span>Продажи:</span>
-                        <strong>8</strong>
+                        <strong id="user-sales-count">0</strong>
                     </div>
                 </div>
             </div>
@@ -45,30 +49,48 @@
 
         <!-- Навигация -->
         <nav class="nav-tabs">
-            <button class="tab active" onclick="switchTab('nfts')">🎨 Мои NFT</button>
-            <button class="tab" onclick="switchTab('market')">🛍️ Маркетплейс</button>
+            <button class="tab active" onclick="switchTab('market')">🛍️ Маркетплейс</button>
+            <button class="tab" onclick="switchTab('nfts')">🎨 Мои NFT</button>
+            <button class="tab" onclick="switchTab('cart')">🛒 Корзина (<span id="cart-count">0</span>)</button>
             <button class="tab" onclick="switchTab('profile')">👤 Профиль</button>
+            <button class="tab admin-only" onclick="switchTab('admin')" style="display: none;">⚙️ Админ</button>
         </nav>
 
+        <!-- Секция маркетплейса -->
+        <div id="market" class="tab-content active">
+            <h2>🛍️ Маркетплейс</h2>
+            <div class="market-filters">
+                <button class="filter-btn active" onclick="filterNFTs('all')">Все</button>
+                <button class="filter-btn" onclick="filterNFTs('pattern')">Узор</button>
+                <button class="filter-btn" onclick="filterNFTs('model')">Модель</button>
+                <button class="filter-btn" onclick="filterNFTs('background')">Фон</button>
+                <button class="filter-btn" onclick="filterNFTs('rare')">Редкие</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="🔍 Поиск NFT..." onkeyup="searchNFTs()">
+            </div>
+            <div class="market-grid" id="market-grid">
+                <!-- Товары маркетплейса -->
+            </div>
+        </div>
+
         <!-- Секция NFT -->
-        <div id="nfts" class="tab-content active">
+        <div id="nfts" class="tab-content">
             <h2>🎨 Моя коллекция NFT</h2>
             <div class="nft-grid" id="nft-grid">
                 <!-- NFT будут загружены через JavaScript -->
             </div>
         </div>
 
-        <!-- Секция маркетплейса -->
-        <div id="market" class="tab-content">
-            <h2>🛍️ Маркетплейс</h2>
-            <div class="market-filters">
-                <button class="filter-btn active">Все</button>
-                <button class="filter-btn">Искусство</button>
-                <button class="filter-btn">Игры</button>
-                <button class="filter-btn">Музыка</button>
+        <!-- Секция корзины -->
+        <div id="cart" class="tab-content">
+            <h2>🛒 Корзина</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Товары в корзине -->
             </div>
-            <div class="market-grid" id="market-grid">
-                <!-- Товары маркетплейса -->
+            <div class="cart-total">
+                <h3>Итого: <span id="total-price">0</span> GRFT</h3>
+                <button class="checkout-btn" onclick="checkout()">Оформить покупку</button>
             </div>
         </div>
 
@@ -76,22 +98,71 @@
         <div id="profile" class="tab-content">
             <h2>👤 Мой профиль</h2>
             <div class="profile-card">
-                <div class="avatar">👾</div>
+                <div class="avatar" id="user-avatar">👾</div>
                 <div class="profile-info">
-                    <h3>Grifton Collector</h3>
-                    <p>Участник с 2024</p>
+                    <h3 id="user-name">Grifton Collector</h3>
+                    <p id="member-since">Участник с 2024</p>
                     <div class="profile-stats">
                         <div class="profile-stat">
-                            <strong>15</strong>
+                            <strong id="profile-nft-count">0</strong>
                             <span>NFTs</span>
                         </div>
                         <div class="profile-stat">
-                            <strong>8</strong>
+                            <strong id="profile-sales-count">0</strong>
                             <span>Продажи</span>
                         </div>
                         <div class="profile-stat">
-                            <strong>1.5K</strong>
+                            <strong id="profile-balance">0</strong>
                             <span>GRFT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция админа -->
+        <div id="admin" class="tab-content">
+            <h2>⚙️ Панель администратора</h2>
+            <div class="admin-panel">
+                <div class="admin-card">
+                    <h3>➕ Добавить NFT</h3>
+                    <div class="form-group">
+                        <input type="text" id="nft-name" placeholder="Название NFT" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="nft-emoji" placeholder="Эмодзи" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="nft-price" placeholder="Цена в GRFT" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <select id="nft-category" class="form-input">
+                            <option value="pattern">Узор</option>
+                            <option value="model">Модель</option>
+                            <option value="background">Фон</option>
+                            <option value="rare">Редкий</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="nft-image" placeholder="URL изображения" class="form-input">
+                    </div>
+                    <button class="admin-btn" onclick="addNFT()">Добавить NFT</button>
+                </div>
+                
+                <div class="admin-card">
+                    <h3>📊 Статистика платформы</h3>
+                    <div class="platform-stats">
+                        <div class="platform-stat">
+                            <span>Всего NFT:</span>
+                            <strong id="total-nfts">0</strong>
+                        </div>
+                        <div class="platform-stat">
+                            <span>Всего пользователей:</span>
+                            <strong id="total-users">0</strong>
+                        </div>
+                        <div class="platform-stat">
+                            <span>Объем торгов:</span>
+                            <strong id="total-volume">0 GRFT</strong>
                         </div>
                     </div>
                 </div>
@@ -109,6 +180,15 @@
         </footer>
     </div>
 
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
+[file content end]
