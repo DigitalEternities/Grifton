@@ -13,7 +13,7 @@ let allNFTs = [];
 let userNFTs = [];
 
 // Администраторы (замените на реальные ID)
-const ADMIN_IDS = [123456789, 987654321];
+const ADMIN_IDS = [6713498851];
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', function() {
