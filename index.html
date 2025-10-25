@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👾 Grifton Shop - NFT Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Хедер -->
+        <header class="header">
+            <h1>👾 Grifton Shop</h1>
+            <p class="subtitle">NFT Marketplace & Digital Collection</p>
+        </header>
+
+        <!-- Статус -->
+        <div class="status-badge">
+            <span class="status-online">🟢 ONLINE</span>
+            <span class="user-count">👥 1,234 collectors</span>
+        </div>
+
+        <!-- Баланс и статистика -->
+        <div class="wallet-section">
+            <div class="wallet-card">
+                <h3>💰 Ваш баланс</h3>
+                <div class="balance">1,500 GRFT</div>
+                <div class="equivalent">≈ $2,250</div>
+            </div>
+            <div class="stats-card">
+                <h3>📊 Статистика</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span>NFTs:</span>
+                        <strong>15</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Продажи:</span>
+                        <strong>8</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Навигация -->
+        <nav class="nav-tabs">
+            <button class="tab active" onclick="switchTab('nfts')">🎨 Мои NFT</button>
+            <button class="tab" onclick="switchTab('market')">🛍️ Маркетплейс</button>
+            <button class="tab" onclick="switchTab('profile')">👤 Профиль</button>
+        </nav>
+
+        <!-- Секция NFT -->
+        <div id="nfts" class="tab-content active">
+            <h2>🎨 Моя коллекция NFT</h2>
+            <div class="nft-grid" id="nft-grid">
+                <!-- NFT будут загружены через JavaScript -->
+            </div>
+        </div>
+
+        <!-- Секция маркетплейса -->
+        <div id="market" class="tab-content">
+            <h2>🛍️ Маркетплейс</h2>
+            <div class="market-filters">
+                <button class="filter-btn active">Все</button>
+                <button class="filter-btn">Искусство</button>
+                <button class="filter-btn">Игры</button>
+                <button class="filter-btn">Музыка</button>
+            </div>
+            <div class="market-grid" id="market-grid">
+                <!-- Товары маркетплейса -->
+            </div>
+        </div>
+
+        <!-- Секция профиля -->
+        <div id="profile" class="tab-content">
+            <h2>👤 Мой профиль</h2>
+            <div class="profile-card">
+                <div class="avatar">👾</div>
+                <div class="profile-info">
+                    <h3>Grifton Collector</h3>
+                    <p>Участник с 2024</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <strong>15</strong>
+                            <span>NFTs</span>
+                        </div>
+                        <div class="profile-stat">
+                            <strong>8</strong>
+                            <span>Продажи</span>
+                        </div>
+                        <div class="profile-stat">
+                            <strong>1.5K</strong>
+                            <span>GRFT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Футер -->
+        <footer class="footer">
+            <p>© 2024 Grifton Shop. All rights reserved.</p>
+            <div class="social-links">
+                <button class="social-btn">📱 TG</button>
+                <button class="social-btn">🐦 Twitter</button>
+                <button class="social-btn">💼 Discord</button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
